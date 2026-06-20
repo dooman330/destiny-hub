@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -7,55 +7,28 @@
 
 <style>
 body{
-background:#f3f4f6;
 font-family:sans-serif;
-margin:0;
 padding:20px;
+background:#f5f5f5;
 }
 
-.card{
+.box{
 background:white;
-padding:16px;
-border-radius:16px;
-margin-bottom:16px;
-box-shadow:0 2px 10px rgba(0,0,0,.08);
+padding:15px;
+border-radius:10px;
+margin-bottom:15px;
 }
 
-h1,h2,h3{
-margin-top:0;
-}
-
-input,select{
+input{
 width:100%;
-padding:12px;
-margin-top:8px;
-margin-bottom:12px;
+padding:10px;
+margin:5px 0;
 box-sizing:border-box;
 }
 
 button{
 width:100%;
-padding:12px;
-border:none;
-border-radius:10px;
-font-size:16px;
-}
-
-.saveBtn{
-background:black;
-color:white;
-}
-
-.person{
-padding:12px;
-border:1px solid #ddd;
-border-radius:10px;
-margin-bottom:8px;
-cursor:pointer;
-}
-
-#report{
-display:none;
+padding:10px;
 }
 </style>
 </head>
@@ -64,138 +37,56 @@ display:none;
 
 <h1>🔮 Destiny Hub</h1>
 
-<div class="card">
-
-<h2>출생정보 등록</h2>
+<div class="box">
+<h2>출생정보</h2>
 
 <input id="name" placeholder="이름">
-
-<select id="gender">
-<option>여성</option>
-<option>남성</option>
-</select>
-
-<input id="birthdate" type="date">
-
-<input id="birthtime" type="time">
-
 <input id="country" placeholder="국가">
-
 <input id="city" placeholder="도시">
 
-<button class="saveBtn" onclick="savePerson()">
-저장
-</button>
-
+<button onclick="savePerson()">저장</button>
 </div>
 
-<div class="card">
-
+<div class="box">
 <h2>저장된 인물</h2>
-
-<div id="people"></div>
-
+<div id="list"></div>
 </div>
-
-<div id="report" class="card"></div>
 
 <script>
 
 function savePerson(){
 
 let people=
-JSON.parse(localStorage.getItem("people")||"[]");
+JSON.parse(localStorage.getItem('people')||'[]');
 
 people.push({
-name:name.value,
-gender:gender.value,
-birthdate:birthdate.value,
-birthtime:birthtime.value,
-country:country.value,
-city:city.value
+name:document.getElementById('name').value,
+country:document.getElementById('country').value,
+city:document.getElementById('city').value
 });
 
 localStorage.setItem(
-"people",
+'people',
 JSON.stringify(people)
 );
 
-renderPeople();
+render();
 
 }
 
-function renderPeople(){
+function render(){
 
 let people=
-JSON.parse(localStorage.getItem("people")||"[]");
+JSON.parse(localStorage.getItem('people')||'[]');
 
-peopleDiv.innerHTML="";
-
-people.forEach((p,index)=>{
-
-peopleDiv.innerHTML+=`
-<div class="person"
-onclick="showReport(${index})">
-
-<b>${p.name}</b><br>
-${p.birthdate}<br>
-${p.city}, ${p.country}
-
-</div>
-`;
-
-});
+document.getElementById('list').innerHTML=
+people.map(p=>
+`<p><b>${p.name}</b> - ${p.city}, ${p.country}</p>`
+).join('');
 
 }
 
-function showReport(index){
-
-let people=
-JSON.parse(localStorage.getItem("people")||"[]");
-
-let p=people[index];
-
-report.style.display="block";
-
-report.innerHTML=`
-
-<h2>${p.name}</h2>
-
-<p>
-${p.birthdate}
-${p.birthtime}
-</p>
-
-<p>
-${p.city},
-${p.country}
-</p>
-
-<hr>
-
-<h3>사주</h3>
-
-<p>
-(추후 연결 예정)
-</p>
-
-<h3>서양점성술</h3>
-
-<p>
-(추후 연결 예정)
-</p>
-
-<h3>인도점성술</h3>
-
-<p>
-(추후 연결 예정)
-</p>
-
-`;
-
-}
-
-renderPeople();
+render();
 
 </script>
 
