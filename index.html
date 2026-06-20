@@ -117,13 +117,9 @@ country:document.getElementById('country').value,
 city:document.getElementById('city').value
 });
 
-localStorage.setItem(
-'people',
-JSON.stringify(people)
-);
+localStorage.setItem('people',JSON.stringify(people));
 
 render();
-
 }
 
 function deleteAll(){
@@ -131,13 +127,10 @@ function deleteAll(){
 if(confirm('모든 인물을 삭제할까요?')){
 
 localStorage.clear();
-
 render();
-
 document.getElementById('report').style.display='none';
 
 }
-
 }
 
 function deletePerson(){
@@ -147,15 +140,11 @@ JSON.parse(localStorage.getItem('people')||'[]');
 
 people.splice(window.currentIndex,1);
 
-localStorage.setItem(
-'people',
-JSON.stringify(people)
-);
+localStorage.setItem('people',JSON.stringify(people));
 
 document.getElementById('report').style.display='none';
 
 render();
-
 }
 
 function editPerson(){
@@ -172,11 +161,7 @@ document.getElementById('birthtime').value=p.birthtime;
 document.getElementById('country').value=p.country;
 document.getElementById('city').value=p.city;
 
-window.scrollTo({
-top:0,
-behavior:'smooth'
-});
-
+window.scrollTo({top:0,behavior:'smooth'});
 }
 
 function showReport(index){
@@ -192,22 +177,17 @@ document.getElementById('report').style.display='block';
 
 document.getElementById('reportContent').innerHTML=`
 
-<div class="report-title">
-${p.name}
-</div>
+<div class="report-title">${p.name}</div>
 
 <p><b>성별:</b> ${p.gender}</p>
-
 <p><b>출생일:</b> ${p.birthdate}</p>
-
 <p><b>출생시간:</b> ${p.birthtime}</p>
-
 <p><b>출생지:</b> ${p.city}, ${p.country}</p>
 
 <hr>
 
 <h3>🧧 사주</h3>
-<p>준비중</p>
+<p>${getSaju(p.birthdate)}</p>
 
 <h3>⭐ 서양 점성술</h3>
 <p>준비중</p>
@@ -217,13 +197,8 @@ ${p.name}
 
 <hr>
 
-<button onclick="editPerson()">
-수정
-</button>
-
-<button onclick="deletePerson()">
-이 인물 삭제
-</button>
+<button onclick="editPerson()">수정</button>
+<button onclick="deletePerson()">이 인물 삭제</button>
 
 `;
 
@@ -236,18 +211,47 @@ JSON.parse(localStorage.getItem('people')||'[]');
 
 document.getElementById('list').innerHTML=
 people.map((p,i)=>`
-<div class="person"
-onclick="showReport(${i})">
-
+<div class="person" onclick="showReport(${i})">
 <b>${p.name}</b><br>
 ${p.city}, ${p.country}
-
 </div>
 `).join('');
-
 }
 
 render();
+
+/* =========================
+   🔮 사주 계산 (간단 버전)
+========================= */
+
+function getSaju(dateStr){
+
+const stems=["갑","을","병","정","무","기","경","신","임","계"];
+const branches=["자","축","인","묘","진","사","오","미","신","유","술","해"];
+
+let date=new Date(dateStr);
+
+let year=date.getFullYear();
+let month=date.getMonth()+1;
+let day=date.getDate();
+
+let yearStem=stems[(year-4)%10];
+let yearBranch=branches[(year-4)%12];
+
+let monthStem=stems[(year*12+month)%10];
+let monthBranch=branches[(month+1)%12];
+
+let base=Math.floor(date.getTime()/(1000*60*60*24));
+
+let dayStem=stems[base%10];
+let dayBranch=branches[base%12];
+
+return `
+${yearStem}${yearBranch}년<br>
+${monthStem}${monthBranch}월<br>
+${dayStem}${dayBranch}일
+`;
+}
 
 </script>
 
