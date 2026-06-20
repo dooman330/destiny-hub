@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Destiny Hub</title>
+<style>
+body{
+font-family:sans-serif;
+max-width:900px;
+margin:auto;
+padding:20px;
+background:#f7f7f7;
+}
+.card{
+background:white;
+padding:16px;
+margin-bottom:16px;
+border-radius:12px;
+box-shadow:0 2px 8px rgba(0,0,0,.08);
+}
+input{
+width:100%;
+padding:10px;
+margin-top:8px;
+}
+button{
+margin-top:10px;
+padding:10px 16px;
+}
+</style>
+</head>
+<body>
+
+<h1>Destiny Hub</h1>
+
+<div class="card">
+<h2>출생정보</h2>
+
+<input id="name" placeholder="이름">
+
+<input id="birthdate" type="date">
+
+<input id="birthtime" type="time">
+
+<input id="birthplace" placeholder="출생도시 / 국가">
+
+<button onclick="savePerson()">저장</button>
+</div>
+
+<div class="card">
+<h2>저장된 인물</h2>
+<div id="people"></div>
+</div>
+
+<script>
+
+function savePerson(){
+
+const person={
+name:document.getElementById('name').value,
+date:document.getElementById('birthdate').value,
+time:document.getElementById('birthtime').value,
+place:document.getElementById('birthplace').value
+};
+
+let people=
+JSON.parse(localStorage.getItem('people')||'[]');
+
+people.push(person);
+
+localStorage.setItem(
+'people',
+JSON.stringify(people)
+);
+
+renderPeople();
+
+}
+
+function renderPeople(){
+
+const people=
+JSON.parse(localStorage.getItem('people')||'[]');
+
+document.getElementById('people').innerHTML=
+people.map(p=>`
+<div>
+<b>${p.name}</b><br>
+${p.date} ${p.time}<br>
+${p.place}
+<hr>
+</div>
+`).join('');
+
+}
+
+renderPeople();
+
+</script>
+
+</body>
+</html>
