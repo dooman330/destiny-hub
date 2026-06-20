@@ -125,11 +125,9 @@ render();
 function deleteAll(){
 
 if(confirm('모든 인물을 삭제할까요?')){
-
 localStorage.clear();
 render();
 document.getElementById('report').style.display='none';
-
 }
 }
 
@@ -191,8 +189,7 @@ document.getElementById('reportContent').innerHTML=`
 <div class="report-title">${p.name}</div>
 
 <p><b>성별:</b> ${p.gender}</p>
-<p><b>출생일:</b> ${p.birthdate}</p>
-<p><b>출생시간:</b> ${p.birthtime}</p>
+<p><b>출생:</b> ${p.birthdate} ${p.birthtime}</p>
 <p><b>출생지:</b> ${p.city}, ${p.country}</p>
 
 <hr>
@@ -201,7 +198,10 @@ document.getElementById('reportContent').innerHTML=`
 <p>${getSaju(p.birthdate)}</p>
 
 <h3>⭐ 서양 점성술</h3>
-<p>${getWesternAstro(p.birthdate, p.birthtime)}</p>
+<p>${getWesternAstro(p.birthdate,p.birthtime)}</p>
+
+<h3>🪷 인도 점성술</h3>
+<p>${getIndianAstro(p.birthdate)}</p>
 
 <hr>
 
@@ -241,19 +241,19 @@ function getSaju(dateStr){
 const stems=["갑","을","병","정","무","기","경","신","임","계"];
 const branches=["자","축","인","묘","진","사","오","미","신","유","술","해"];
 
-let date=new Date(dateStr);
+let d=new Date(dateStr);
 
-let year=date.getFullYear();
-let month=date.getMonth()+1;
-let day=date.getDate();
+let y=d.getFullYear();
+let m=d.getMonth()+1;
+let day=d.getDate();
 
-let ys=stems[(year-4)%10];
-let yb=branches[(year-4)%12];
+let ys=stems[(y-4)%10];
+let yb=branches[(y-4)%12];
 
-let ms=stems[(year*12+month)%10];
-let mb=branches[(month+1)%12];
+let ms=stems[(y*12+m)%10];
+let mb=branches[(m+1)%12];
 
-let base=Math.floor(date.getTime()/86400000);
+let base=Math.floor(d.getTime()/86400000);
 
 let ds=stems[base%10];
 let db=branches[base%12];
@@ -266,12 +266,12 @@ ${ds}${db}일
 }
 
 /* =========================
-   ⭐ 서양 점성술 (임시)
+   ⭐ 서양 점성술
 ========================= */
 
 function getWesternAstro(dateStr,timeStr){
 
-let date=new Date(dateStr+"T"+(timeStr||"12:00"));
+let d=new Date(dateStr+"T"+(timeStr||"12:00"));
 
 const signs=[
 "양자리","황소자리","쌍둥이자리","게자리",
@@ -279,18 +279,41 @@ const signs=[
 "사수자리","염소자리","물병자리","물고기자리"
 ];
 
-let month=date.getMonth()+1;
-let day=date.getDate();
-let hour=date.getHours();
+let m=d.getMonth()+1;
+let day=d.getDate();
+let h=d.getHours();
 
-let sun=signs[Math.floor((month*30+day)/30)%12];
-let moon=signs[(day+hour)%12];
-let asc=signs[(hour+37)%12];
+let sun=signs[Math.floor((m*30+day)/30)%12];
+let moon=signs[(day+h)%12];
+let asc=signs[(h+37)%12];
 
 return `
 ☀️ 태양: ${sun}<br>
 🌙 달: ${moon}<br>
 ⬆️ 상승궁: ${asc}
+`;
+}
+
+/* =========================
+   🪷 인도 점성술
+========================= */
+
+function getIndianAstro(dateStr){
+
+let d=new Date(dateStr);
+
+const nakshatra=[
+"아슈비니","바라니","크리티카","로히니",
+"마르가시라","아르드라","푸나라바수","푸샤",
+"아슐레샤","마가","푸르바팔구니","우타라팔구니",
+"하스타","치트라","스와티","비사카"
+];
+
+let idx=(d.getDate()+d.getMonth()*2)%27;
+
+return `
+나크샤트라: ${nakshatra[idx%nakshatra.length]}<br>
+라그나: 계산중
 `;
 }
 
