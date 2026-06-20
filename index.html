@@ -33,10 +33,25 @@ margin-top:8px;
 }
 
 .person{
-padding:10px;
+padding:12px;
 border:1px solid #ddd;
-border-radius:8px;
+border-radius:10px;
 margin-top:8px;
+cursor:pointer;
+}
+
+.person:hover{
+background:#f8f8f8;
+}
+
+#report{
+display:none;
+}
+
+.report-title{
+font-size:22px;
+font-weight:bold;
+margin-bottom:10px;
 }
 </style>
 </head>
@@ -78,6 +93,12 @@ margin-top:8px;
 
 </div>
 
+<div class="box" id="report">
+
+<div id="reportContent"></div>
+
+</div>
+
 <script>
 
 function savePerson(){
@@ -111,7 +132,64 @@ localStorage.clear();
 
 render();
 
+document.getElementById('report').style.display='none';
+
 }
+
+}
+
+function showReport(index){
+
+let people=
+JSON.parse(localStorage.getItem('people')||'[]');
+
+let p=people[index];
+
+document.getElementById('report').style.display='block';
+
+document.getElementById('reportContent').innerHTML=`
+
+<div class="report-title">
+${p.name}
+</div>
+
+<p>
+성별: ${p.gender}
+</p>
+
+<p>
+출생일: ${p.birthdate}
+</p>
+
+<p>
+출생시간: ${p.birthtime}
+</p>
+
+<p>
+출생지: ${p.city}, ${p.country}
+</p>
+
+<hr>
+
+<h3>🧧 사주</h3>
+
+<p>
+준비중
+</p>
+
+<h3>⭐ 서양 점성술</h3>
+
+<p>
+준비중
+</p>
+
+<h3>🪷 인도 점성술</h3>
+
+<p>
+준비중
+</p>
+
+`;
 
 }
 
@@ -121,13 +199,14 @@ let people=
 JSON.parse(localStorage.getItem('people')||'[]');
 
 document.getElementById('list').innerHTML=
-people.map(p=>`
-<div class="person">
+people.map((p,i)=>`
+<div class="person"
+onclick="showReport(${i})">
+
 <b>${p.name}</b><br>
-성별: ${p.gender}<br>
-생일: ${p.birthdate}<br>
-시간: ${p.birthtime}<br>
+
 ${p.city}, ${p.country}
+
 </div>
 `).join('');
 
