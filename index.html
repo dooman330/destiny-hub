@@ -80,7 +80,6 @@ margin-bottom:10px;
 <input id="city" placeholder="도시">
 
 <button onclick="savePerson()">저장</button>
-
 <button onclick="deleteAll()">전체 삭제</button>
 
 </div>
@@ -94,14 +93,16 @@ margin-bottom:10px;
 </div>
 
 <div class="box" id="report">
-
 <div id="reportContent"></div>
-
 </div>
 
 <script>
 
 window.currentIndex=null;
+
+/* =========================
+   저장 / 삭제
+========================= */
 
 function savePerson(){
 
@@ -109,16 +110,15 @@ let people=
 JSON.parse(localStorage.getItem('people')||'[]');
 
 people.push({
-name:document.getElementById('name').value,
-gender:document.getElementById('gender').value,
-birthdate:document.getElementById('birthdate').value,
-birthtime:document.getElementById('birthtime').value,
-country:document.getElementById('country').value,
-city:document.getElementById('city').value
+name:name.value,
+gender:gender.value,
+birthdate:birthdate.value,
+birthtime:birthtime.value,
+country:country.value,
+city:city.value
 });
 
 localStorage.setItem('people',JSON.stringify(people));
-
 render();
 }
 
@@ -133,6 +133,10 @@ document.getElementById('report').style.display='none';
 }
 }
 
+/* =========================
+   개별 삭제
+========================= */
+
 function deletePerson(){
 
 let people=
@@ -143,9 +147,12 @@ people.splice(window.currentIndex,1);
 localStorage.setItem('people',JSON.stringify(people));
 
 document.getElementById('report').style.display='none';
-
 render();
 }
+
+/* =========================
+   수정 불러오기
+========================= */
 
 function editPerson(){
 
@@ -154,15 +161,19 @@ JSON.parse(localStorage.getItem('people')||'[]');
 
 let p=people[window.currentIndex];
 
-document.getElementById('name').value=p.name;
-document.getElementById('gender').value=p.gender;
-document.getElementById('birthdate').value=p.birthdate;
-document.getElementById('birthtime').value=p.birthtime;
-document.getElementById('country').value=p.country;
-document.getElementById('city').value=p.city;
+name.value=p.name;
+gender.value=p.gender;
+birthdate.value=p.birthdate;
+birthtime.value=p.birthtime;
+country.value=p.country;
+city.value=p.city;
 
 window.scrollTo({top:0,behavior:'smooth'});
 }
+
+/* =========================
+   리포트
+========================= */
 
 function showReport(index){
 
@@ -190,10 +201,7 @@ document.getElementById('reportContent').innerHTML=`
 <p>${getSaju(p.birthdate)}</p>
 
 <h3>⭐ 서양 점성술</h3>
-<p>준비중</p>
-
-<h3>🪷 인도 점성술</h3>
-<p>준비중</p>
+<p>${getWesternAstro(p.birthdate, p.birthtime)}</p>
 
 <hr>
 
@@ -203,6 +211,10 @@ document.getElementById('reportContent').innerHTML=`
 `;
 
 }
+
+/* =========================
+   리스트
+========================= */
 
 function render(){
 
@@ -221,7 +233,7 @@ ${p.city}, ${p.country}
 render();
 
 /* =========================
-   🔮 사주 계산 (간단 버전)
+   🧧 사주 (간단)
 ========================= */
 
 function getSaju(dateStr){
@@ -235,21 +247,50 @@ let year=date.getFullYear();
 let month=date.getMonth()+1;
 let day=date.getDate();
 
-let yearStem=stems[(year-4)%10];
-let yearBranch=branches[(year-4)%12];
+let ys=stems[(year-4)%10];
+let yb=branches[(year-4)%12];
 
-let monthStem=stems[(year*12+month)%10];
-let monthBranch=branches[(month+1)%12];
+let ms=stems[(year*12+month)%10];
+let mb=branches[(month+1)%12];
 
-let base=Math.floor(date.getTime()/(1000*60*60*24));
+let base=Math.floor(date.getTime()/86400000);
 
-let dayStem=stems[base%10];
-let dayBranch=branches[base%12];
+let ds=stems[base%10];
+let db=branches[base%12];
 
 return `
-${yearStem}${yearBranch}년<br>
-${monthStem}${monthBranch}월<br>
-${dayStem}${dayBranch}일
+${ys}${yb}년<br>
+${ms}${mb}월<br>
+${ds}${db}일
+`;
+}
+
+/* =========================
+   ⭐ 서양 점성술 (임시)
+========================= */
+
+function getWesternAstro(dateStr,timeStr){
+
+let date=new Date(dateStr+"T"+(timeStr||"12:00"));
+
+const signs=[
+"양자리","황소자리","쌍둥이자리","게자리",
+"사자자리","처녀자리","천칭자리","전갈자리",
+"사수자리","염소자리","물병자리","물고기자리"
+];
+
+let month=date.getMonth()+1;
+let day=date.getDate();
+let hour=date.getHours();
+
+let sun=signs[Math.floor((month*30+day)/30)%12];
+let moon=signs[(day+hour)%12];
+let asc=signs[(hour+37)%12];
+
+return `
+☀️ 태양: ${sun}<br>
+🌙 달: ${moon}<br>
+⬆️ 상승궁: ${asc}
 `;
 }
 
