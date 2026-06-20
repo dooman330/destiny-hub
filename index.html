@@ -101,6 +101,8 @@ margin-bottom:10px;
 
 <script>
 
+window.currentIndex=null;
+
 function savePerson(){
 
 let people=
@@ -138,7 +140,48 @@ document.getElementById('report').style.display='none';
 
 }
 
+function deletePerson(){
+
+let people=
+JSON.parse(localStorage.getItem('people')||'[]');
+
+people.splice(window.currentIndex,1);
+
+localStorage.setItem(
+'people',
+JSON.stringify(people)
+);
+
+document.getElementById('report').style.display='none';
+
+render();
+
+}
+
+function editPerson(){
+
+let people=
+JSON.parse(localStorage.getItem('people')||'[]');
+
+let p=people[window.currentIndex];
+
+document.getElementById('name').value=p.name;
+document.getElementById('gender').value=p.gender;
+document.getElementById('birthdate').value=p.birthdate;
+document.getElementById('birthtime').value=p.birthtime;
+document.getElementById('country').value=p.country;
+document.getElementById('city').value=p.city;
+
+window.scrollTo({
+top:0,
+behavior:'smooth'
+});
+
+}
+
 function showReport(index){
+
+window.currentIndex=index;
 
 let people=
 JSON.parse(localStorage.getItem('people')||'[]');
@@ -153,41 +196,34 @@ document.getElementById('reportContent').innerHTML=`
 ${p.name}
 </div>
 
-<p>
-성별: ${p.gender}
-</p>
+<p><b>성별:</b> ${p.gender}</p>
 
-<p>
-출생일: ${p.birthdate}
-</p>
+<p><b>출생일:</b> ${p.birthdate}</p>
 
-<p>
-출생시간: ${p.birthtime}
-</p>
+<p><b>출생시간:</b> ${p.birthtime}</p>
 
-<p>
-출생지: ${p.city}, ${p.country}
-</p>
+<p><b>출생지:</b> ${p.city}, ${p.country}</p>
 
 <hr>
 
 <h3>🧧 사주</h3>
-
-<p>
-준비중
-</p>
+<p>준비중</p>
 
 <h3>⭐ 서양 점성술</h3>
-
-<p>
-준비중
-</p>
+<p>준비중</p>
 
 <h3>🪷 인도 점성술</h3>
+<p>준비중</p>
 
-<p>
-준비중
-</p>
+<hr>
+
+<button onclick="editPerson()">
+수정
+</button>
+
+<button onclick="deletePerson()">
+이 인물 삭제
+</button>
 
 `;
 
@@ -204,7 +240,6 @@ people.map((p,i)=>`
 onclick="showReport(${i})">
 
 <b>${p.name}</b><br>
-
 ${p.city}, ${p.country}
 
 </div>
