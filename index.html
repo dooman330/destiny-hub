@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="ko">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -15,11 +15,11 @@ background:#f5f5f5;
 .box{
 background:white;
 padding:15px;
-border-radius:10px;
+border-radius:12px;
 margin-bottom:15px;
 }
 
-input{
+input,select{
 width:100%;
 padding:10px;
 margin:5px 0;
@@ -28,7 +28,15 @@ box-sizing:border-box;
 
 button{
 width:100%;
+padding:12px;
+margin-top:8px;
+}
+
+.person{
 padding:10px;
+border:1px solid #ddd;
+border-radius:8px;
+margin-top:8px;
 }
 </style>
 </head>
@@ -38,18 +46,36 @@ padding:10px;
 <h1>🔮 Destiny Hub</h1>
 
 <div class="box">
+
 <h2>출생정보</h2>
 
 <input id="name" placeholder="이름">
+
+<select id="gender">
+<option value="여성">여성</option>
+<option value="남성">남성</option>
+</select>
+
+<input id="birthdate" type="date">
+
+<input id="birthtime" type="time">
+
 <input id="country" placeholder="국가">
+
 <input id="city" placeholder="도시">
 
 <button onclick="savePerson()">저장</button>
+
+<button onclick="deleteAll()">전체 삭제</button>
+
 </div>
 
 <div class="box">
+
 <h2>저장된 인물</h2>
+
 <div id="list"></div>
+
 </div>
 
 <script>
@@ -61,6 +87,9 @@ JSON.parse(localStorage.getItem('people')||'[]');
 
 people.push({
 name:document.getElementById('name').value,
+gender:document.getElementById('gender').value,
+birthdate:document.getElementById('birthdate').value,
+birthtime:document.getElementById('birthtime').value,
 country:document.getElementById('country').value,
 city:document.getElementById('city').value
 });
@@ -74,15 +103,33 @@ render();
 
 }
 
+function deleteAll(){
+
+if(confirm('모든 인물을 삭제할까요?')){
+
+localStorage.clear();
+
+render();
+
+}
+
+}
+
 function render(){
 
 let people=
 JSON.parse(localStorage.getItem('people')||'[]');
 
 document.getElementById('list').innerHTML=
-people.map(p=>
-`<p><b>${p.name}</b> - ${p.city}, ${p.country}</p>`
-).join('');
+people.map(p=>`
+<div class="person">
+<b>${p.name}</b><br>
+성별: ${p.gender}<br>
+생일: ${p.birthdate}<br>
+시간: ${p.birthtime}<br>
+${p.city}, ${p.country}
+</div>
+`).join('');
 
 }
 
